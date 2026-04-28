@@ -48,12 +48,18 @@ const STEALTH_LIMIT_MS = 10_000;
 
 const monsterSpecs: Record<
   MonsterKind,
-  { name: string; weakness: Weapon | "stealth"; icon: string }
+  { name: string; weakness: Weapon | "stealth"; label: string }
 > = {
-  leaf: { name: "Leaf Space Monster", weakness: "fire", icon: "☘" },
-  fire: { name: "Fire Space Monster", weakness: "water", icon: "🔥" },
-  stone: { name: "Stone Space Monster", weakness: "laser beam", icon: "◆" },
-  goblin: { name: "Goblin Thief Monster", weakness: "stealth", icon: "👾" },
+  leaf: { name: "Leaf Monster", weakness: "fire", label: "Leaf Monster" },
+  fire: { name: "Fire Monster", weakness: "water", label: "Fire Monster" },
+  stone: { name: "Stone Monster", weakness: "laser beam", label: "Stone Monster" },
+  goblin: { name: "Goblin Monster", weakness: "stealth", label: "Goblin Monster" },
+};
+
+const weaponBeamColor: Record<Weapon, string> = {
+  fire: "var(--color-hazard)",
+  water: "oklch(0.72 0.18 235)",
+  "laser beam": "var(--color-primary)",
 };
 
 const weaponOptions: WeaponFlag[] = [
@@ -107,6 +113,12 @@ function makeMonster(kind: MonsterKind): Monster {
 
 function shuffle<T>(items: T[]) {
   return [...items].sort(() => Math.random() - 0.5);
+}
+
+function weaponForMonster(monster: Monster, activeWeapons: Weapon[]) {
+  const weakness = monsterSpecs[monster.kind].weakness;
+  if (weakness === "stealth") return undefined;
+  return activeWeapons.includes(weakness) ? weakness : undefined;
 }
 
 function Index() {
@@ -441,6 +453,8 @@ function Battlefield({
   level: number;
   gameState: GameState;
 }) {
+  const activeShots = gameState === "RUNNING" && !isStealth;
+
   return (
     <section className="scanline relative min-h-[560px] overflow-hidden rounded-lg border bg-space shadow-command game-grid">
       <div className="absolute left-4 top-4 z-10 rounded-md border bg-panel/75 px-3 py-2 text-sm font-semibold text-panel-foreground backdrop-blur">
@@ -467,7 +481,7 @@ function Battlefield({
       <div className="absolute inset-x-0 bottom-6 flex justify-center">
         <div
           className={cn(
-            "relative grid size-28 place-items-center transition",
+            "relative grid size-32 place-items-center transition",
             isStealth && "opacity-70",
           )}
         >
@@ -477,12 +491,36 @@ function Battlefield({
               isStealth ? "bg-stealth/20 shadow-glow" : "bg-primary/15",
             )}
           />
-          <div className="font-display relative text-6xl">🚀</div>
+          <SpaceshipGraphic stealth={isStealth} />
           <p className="absolute -bottom-5 text-xs font-bold uppercase tracking-[0.2em] text-primary">
             Mothership
           </p>
         </div>
       </div>
+      {activeShots && (
+        <svg className="pointer-events-none absolute inset-0 z-[1] h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {monsters.map((monster) => {
+            const weapon = weaponForMonster(monster, activeWeapons);
+            if (!weapon) return null;
+
+            return (
+              <g key={`shot-${monster.id}`}>
+                <line
+                  className="weapon-beam"
+                  x1="50"
+                  y1="86"
+                  x2={monster.x}
+                  y2={Math.max(2, monster.y)}
+                  stroke={weaponBeamColor[weapon]}
+                  strokeWidth="0.65"
+                  strokeLinecap="round"
+                />
+                <circle cx={monster.x} cy={Math.max(2, monster.y)} r="1.5" fill={weaponBeamColor[weapon]} opacity="0.85" />
+              </g>
+            );
+          })}
+        </svg>
+      )}
       {monsters.map((monster) => (
         <MonsterSprite key={monster.id} monster={monster} />
       ))}
@@ -505,16 +543,46 @@ function MonsterSprite({ monster }: { monster: Monster }) {
   return (
     <div
       className={cn(
-        "absolute grid size-16 place-items-center rounded-lg border bg-panel/85 text-3xl shadow-command transition-transform duration-100",
+        "absolute z-10 grid size-20 place-items-center rounded-lg border bg-panel/85 shadow-command transition-transform duration-100",
+        monster.kind === "leaf" && "border-primary/70",
+        monster.kind === "fire" && "border-hazard/80",
+        monster.kind === "stone" && "border-muted/80",
         monster.kind === "goblin" && "animate-alert-pulse border-hazard bg-hazard/20",
       )}
       style={{ left: `${monster.x}%`, top: `${monster.y}%`, transform: "translate(-50%, -50%)" }}
       title={`${spec.name} — weakness: ${spec.weakness}`}
     >
-      <span>{spec.icon}</span>
-      <span className="absolute -bottom-6 rounded-sm bg-panel px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-panel-foreground">
-        {spec.weakness}
+      <MonsterGraphic kind={monster.kind} />
+      <span className="absolute -bottom-7 whitespace-nowrap rounded-sm border bg-panel px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-panel-foreground">
+        {spec.label}
       </span>
+    </div>
+  );
+}
+
+function MonsterGraphic({ kind }: { kind: MonsterKind }) {
+  if (kind === "leaf") {
+    return <div className="monster-leaf" aria-label="Leaf Monster" />;
+  }
+  if (kind === "fire") {
+    return <div className="monster-fire" aria-label="Fire Monster" />;
+  }
+  if (kind === "stone") {
+    return <div className="monster-stone" aria-label="Stone Monster" />;
+  }
+  return <div className="monster-goblin" aria-label="Goblin Monster" />;
+}
+
+function SpaceshipGraphic({ stealth }: { stealth: boolean }) {
+  return (
+    <div className={cn("spaceship", stealth && "spaceship-stealth")} aria-label="Spaceship">
+      <div className="spaceship-nose" />
+      <div className="spaceship-body">
+        <span />
+      </div>
+      <div className="spaceship-wing spaceship-wing-left" />
+      <div className="spaceship-wing spaceship-wing-right" />
+      <div className="spaceship-thruster" />
     </div>
   );
 }
