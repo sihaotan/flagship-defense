@@ -139,7 +139,7 @@ function Index() {
           name: "Mothership Pilot",
         });
         clientRef.current = client;
-        await client.waitForInitialization({ timeout: 8 });
+        await client.waitForInitialization(8);
         if (cancelled) return;
         const nextValue = normalizeFlag(client.variation(FLAG_KEY, "stealth mode"));
         setFlagValue(nextValue);
