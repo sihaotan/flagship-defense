@@ -140,7 +140,10 @@ function Index() {
 
   const activeWeapons = useMemo(() => weaponsFromFlag(flagValue), [flagValue]);
   const isStealth = activeWeapons.length === 0 || flagValue === "stealth mode";
-  const isPowerUp = flagValue === "fire, water and laser beam";
+  const isPowerUp =
+    activeWeapons.includes("fire") &&
+    activeWeapons.includes("water") &&
+    activeWeapons.includes("laser beam");
   const level = getLevel(elapsedMs);
 
   useEffect(() => {
@@ -244,7 +247,11 @@ function Index() {
   }, [activeWeapons, elapsedMs, gameState, isPowerUp, isStealth]);
 
   function normalizeFlag(value: unknown): WeaponFlag {
-    return weaponOptions.includes(value as WeaponFlag) ? (value as WeaponFlag) : "stealth mode";
+    if (typeof value !== "string") return "stealth mode";
+    const cleanValue = value.trim().toLowerCase();
+    return weaponOptions.includes(cleanValue as WeaponFlag)
+      ? (cleanValue as WeaponFlag)
+      : "stealth mode";
   }
 
   function saveClientId() {
