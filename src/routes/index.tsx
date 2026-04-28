@@ -491,7 +491,15 @@ function Battlefield({
               isStealth ? "bg-stealth/20 shadow-glow" : "bg-primary/15",
             )}
           />
-          <SpaceshipGraphic stealth={isStealth} />
+          <div className={cn("spaceship", isStealth && "spaceship-stealth")} aria-label="Spaceship">
+            <div className="spaceship-nose" />
+            <div className="spaceship-body">
+              <span />
+            </div>
+            <div className="spaceship-wing spaceship-wing-left" />
+            <div className="spaceship-wing spaceship-wing-right" />
+            <div className="spaceship-thruster" />
+          </div>
           <p className="absolute -bottom-5 text-xs font-bold uppercase tracking-[0.2em] text-primary">
             Mothership
           </p>
@@ -571,20 +579,6 @@ function MonsterGraphic({ kind }: { kind: MonsterKind }) {
     return <div className="monster-stone" aria-label="Stone Monster" />;
   }
   return <div className="monster-goblin" aria-label="Goblin Monster" />;
-}
-
-function SpaceshipGraphic({ stealth }: { stealth: boolean }) {
-  return (
-    <div className={cn("spaceship", stealth && "spaceship-stealth")} aria-label="Spaceship">
-      <div className="spaceship-nose" />
-      <div className="spaceship-body">
-        <span />
-      </div>
-      <div className="spaceship-wing spaceship-wing-left" />
-      <div className="spaceship-wing spaceship-wing-right" />
-      <div className="spaceship-thruster" />
-    </div>
-  );
 }
 
 function CommandPanel({
