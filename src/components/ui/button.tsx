@@ -16,7 +16,8 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        command: "bg-gradient-primary text-primary-foreground shadow-glow hover:-translate-y-0.5 hover:shadow-command",
+        command:
+          "bg-gradient-primary text-primary-foreground shadow-glow hover:-translate-y-0.5 hover:shadow-command",
         stealth: "bg-gradient-stealth text-stealth-foreground shadow-sm hover:-translate-y-0.5",
         danger: "bg-gradient-hazard text-hazard-foreground shadow-sm hover:-translate-y-0.5",
       },

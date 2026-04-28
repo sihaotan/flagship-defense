@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type { LDClient } from "launchdarkly-js-client-sdk";
-import { Activity, Crosshair, Flame, RadioTower, RotateCcw, Satellite, Shield, Waves, Zap } from "lucide-react";
+import {
+  Activity,
+  Crosshair,
+  Flame,
+  RadioTower,
+  RotateCcw,
+  Satellite,
+  Shield,
+  Waves,
+  Zap,
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -36,7 +46,10 @@ const SPAWN_INTERVAL_MS = 2_000;
 const LEVEL_DURATION_MS = 15_000;
 const STEALTH_LIMIT_MS = 10_000;
 
-const monsterSpecs: Record<MonsterKind, { name: string; weakness: Weapon | "stealth"; icon: string }> = {
+const monsterSpecs: Record<
+  MonsterKind,
+  { name: string; weakness: Weapon | "stealth"; icon: string }
+> = {
   leaf: { name: "Leaf Space Monster", weakness: "fire", icon: "☘" },
   fire: { name: "Fire Space Monster", weakness: "water", icon: "🔥" },
   stone: { name: "Stone Space Monster", weakness: "laser beam", icon: "◆" },
@@ -173,7 +186,10 @@ function Index() {
 
       setMonsters((current) => {
         const currentLevel = getLevel(elapsedMs);
-        let nextMonsters = current.map((monster) => ({ ...monster, y: monster.y + monster.speed * 0.1 }));
+        let nextMonsters = current.map((monster) => ({
+          ...monster,
+          y: monster.y + monster.speed * 0.1,
+        }));
 
         nextMonsters = nextMonsters.filter((monster) => {
           if (monster.kind === "goblin") return true;
@@ -264,13 +280,21 @@ function Index() {
               <span
                 className={cn(
                   "inline-flex items-center gap-2 rounded-md border px-3 py-1 font-semibold",
-                  ldStatus === "ready" ? "border-success bg-success/15 text-success" : "border-hazard bg-hazard/15 text-hazard",
+                  ldStatus === "ready"
+                    ? "border-success bg-success/15 text-success"
+                    : "border-hazard bg-hazard/15 text-hazard",
                 )}
               >
                 <span className="size-2 rounded-full bg-current" />
-                {ldStatus === "ready" ? "LaunchDarkly connected" : ldStatus === "connecting" ? "Connecting" : "LaunchDarkly not ready"}
+                {ldStatus === "ready"
+                  ? "LaunchDarkly connected"
+                  : ldStatus === "connecting"
+                    ? "Connecting"
+                    : "LaunchDarkly not ready"}
               </span>
-              <span className="rounded-md border bg-muted/20 px-3 py-1 font-mono text-xs">{FLAG_KEY}</span>
+              <span className="rounded-md border bg-muted/20 px-3 py-1 font-mono text-xs">
+                {FLAG_KEY}
+              </span>
             </div>
             <div className="flex gap-2">
               <input
@@ -287,15 +311,41 @@ function Index() {
         </header>
 
         <div className="grid flex-1 gap-4 lg:grid-cols-[18rem_1fr_19rem]">
-          <StatusPanel score={score} level={level} flagValue={flagValue} stealthMs={stealthMs} activeWeapons={activeWeapons} />
-          <Battlefield monsters={monsters} activeWeapons={activeWeapons} isStealth={isStealth} level={level} gameState={gameState} />
-          <CommandPanel gameState={gameState} ldReady={ldStatus === "ready"} startGame={startGame} />
+          <StatusPanel
+            score={score}
+            level={level}
+            flagValue={flagValue}
+            stealthMs={stealthMs}
+            activeWeapons={activeWeapons}
+          />
+          <Battlefield
+            monsters={monsters}
+            activeWeapons={activeWeapons}
+            isStealth={isStealth}
+            level={level}
+            gameState={gameState}
+          />
+          <CommandPanel
+            gameState={gameState}
+            ldReady={ldStatus === "ready"}
+            startGame={startGame}
+          />
         </div>
       </section>
 
-      {gameState === "INIT" && <InitOverlay saveClientId={saveClientId} draftClientId={draftClientId} setDraftClientId={setDraftClientId} />}
+      {gameState === "INIT" && (
+        <InitOverlay
+          saveClientId={saveClientId}
+          draftClientId={draftClientId}
+          setDraftClientId={setDraftClientId}
+        />
+      )}
       {gameState === "GAME_OVER" && (
-        <GameOverOverlay score={score} reason={gameOverReason} onRestart={() => setGameState("INSTRUCTION")} />
+        <GameOverOverlay
+          score={score}
+          reason={gameOverReason}
+          onRestart={() => setGameState("INSTRUCTION")}
+        />
       )}
     </main>
   );
@@ -319,16 +369,25 @@ function StatusPanel({
       <div className="grid gap-3">
         <Metric label="Score" value={score.toLocaleString()} />
         <Metric label="Level" value={`${level} / 3`} />
-        <Metric label="Stealth" value={`${(stealthMs / 1000).toFixed(1)}s`} danger={stealthMs <= 3_000} />
+        <Metric
+          label="Stealth"
+          value={`${(stealthMs / 1000).toFixed(1)}s`}
+          danger={stealthMs <= 3_000}
+        />
         <div className="rounded-lg border bg-background/10 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Weapon flag</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Weapon flag
+          </p>
           <p className="mt-1 font-display text-xl font-bold text-primary">{flagValue}</p>
           <div className="mt-3 grid gap-2">
             {activeWeapons.length ? (
               activeWeapons.map((weapon) => {
                 const Icon = weaponVisuals[weapon].icon;
                 return (
-                  <span key={weapon} className="inline-flex items-center gap-2 rounded-md border bg-card/15 px-3 py-2 text-sm font-semibold">
+                  <span
+                    key={weapon}
+                    className="inline-flex items-center gap-2 rounded-md border bg-card/15 px-3 py-2 text-sm font-semibold"
+                  >
                     <Icon className="size-4 text-accent" /> {weaponVisuals[weapon].label} armed
                   </span>
                 );
@@ -345,10 +404,25 @@ function StatusPanel({
   );
 }
 
-function Metric({ label, value, danger = false }: { label: string; value: string; danger?: boolean }) {
+function Metric({
+  label,
+  value,
+  danger = false,
+}: {
+  label: string;
+  value: string;
+  danger?: boolean;
+}) {
   return (
-    <div className={cn("rounded-lg border bg-background/10 p-3", danger && "animate-alert-pulse border-hazard text-hazard")}>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+    <div
+      className={cn(
+        "rounded-lg border bg-background/10 p-3",
+        danger && "animate-alert-pulse border-hazard text-hazard",
+      )}
+    >
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </p>
       <p className="font-display mt-1 text-3xl font-bold">{value}</p>
     </div>
   );
@@ -391,10 +465,22 @@ function Battlefield({
       </div>
       <div className="absolute inset-x-0 top-[86%] border-t border-dashed border-hazard/70" />
       <div className="absolute inset-x-0 bottom-6 flex justify-center">
-        <div className={cn("relative grid size-28 place-items-center transition", isStealth && "opacity-70")}> 
-          <div className={cn("absolute inset-0 rounded-full border border-primary/35", isStealth ? "bg-stealth/20 shadow-glow" : "bg-primary/15")} />
+        <div
+          className={cn(
+            "relative grid size-28 place-items-center transition",
+            isStealth && "opacity-70",
+          )}
+        >
+          <div
+            className={cn(
+              "absolute inset-0 rounded-full border border-primary/35",
+              isStealth ? "bg-stealth/20 shadow-glow" : "bg-primary/15",
+            )}
+          />
           <div className="font-display relative text-6xl">🚀</div>
-          <p className="absolute -bottom-5 text-xs font-bold uppercase tracking-[0.2em] text-primary">Mothership</p>
+          <p className="absolute -bottom-5 text-xs font-bold uppercase tracking-[0.2em] text-primary">
+            Mothership
+          </p>
         </div>
       </div>
       {monsters.map((monster) => (
@@ -404,7 +490,9 @@ function Battlefield({
         <div className="absolute inset-0 grid place-items-center bg-space/55 p-6 text-center backdrop-blur-sm">
           <div>
             <p className="font-display text-4xl font-bold">Level {level} defense grid</p>
-            <p className="mt-2 max-w-xl text-muted-foreground">Launch the run, then change {FLAG_KEY} in LaunchDarkly to match incoming weaknesses.</p>
+            <p className="mt-2 max-w-xl text-muted-foreground">
+              Launch the run, then change {FLAG_KEY} in LaunchDarkly to match incoming weaknesses.
+            </p>
           </div>
         </div>
       )}
@@ -431,7 +519,15 @@ function MonsterSprite({ monster }: { monster: Monster }) {
   );
 }
 
-function CommandPanel({ gameState, ldReady, startGame }: { gameState: GameState; ldReady: boolean; startGame: () => void }) {
+function CommandPanel({
+  gameState,
+  ldReady,
+  startGame,
+}: {
+  gameState: GameState;
+  ldReady: boolean;
+  startGame: () => void;
+}) {
   return (
     <aside className="rounded-lg border bg-gradient-panel p-4 text-panel-foreground shadow-command backdrop-blur">
       <div className="flex h-full flex-col gap-4">
@@ -447,17 +543,28 @@ function CommandPanel({ gameState, ldReady, startGame }: { gameState: GameState;
           </ul>
         </div>
         <div className="rounded-lg border bg-background/10 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Supported variations</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Supported variations
+          </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {weaponOptions.map((option) => (
-              <span key={option} className="rounded-md border bg-card/10 px-2 py-1 text-xs font-semibold text-panel-foreground">
+              <span
+                key={option}
+                className="rounded-md border bg-card/10 px-2 py-1 text-xs font-semibold text-panel-foreground"
+              >
                 {option}
               </span>
             ))}
           </div>
         </div>
-        <Button variant={gameState === "RUNNING" ? "secondary" : "command"} size="xl" disabled={!ldReady || gameState === "RUNNING"} onClick={startGame}>
-          <Crosshair className="size-5" /> {gameState === "RUNNING" ? "Defense active" : "Start defense"}
+        <Button
+          variant={gameState === "RUNNING" ? "secondary" : "command"}
+          size="xl"
+          disabled={!ldReady || gameState === "RUNNING"}
+          onClick={startGame}
+        >
+          <Crosshair className="size-5" />{" "}
+          {gameState === "RUNNING" ? "Defense active" : "Start defense"}
         </Button>
       </div>
     </aside>
@@ -480,7 +587,9 @@ function InitOverlay({
           <Activity className="size-4" /> INIT
         </p>
         <h2 className="font-display mt-2 text-3xl font-bold">Connect LaunchDarkly</h2>
-        <p className="mt-2 text-sm text-muted-foreground">Enter your client-side ID once. It is stored in this browser and reused for future runs.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Enter your client-side ID once. It is stored in this browser and reused for future runs.
+        </p>
         <div className="mt-5 flex gap-2">
           <input
             value={draftClientId}
@@ -488,20 +597,32 @@ function InitOverlay({
             placeholder="LaunchDarkly client-side ID"
             className="min-w-0 flex-1 rounded-md border bg-background/80 px-3 py-2 text-sm text-foreground outline-none transition focus:ring-2 focus:ring-ring"
           />
-          <Button variant="command" onClick={saveClientId}>Submit</Button>
+          <Button variant="command" onClick={saveClientId}>
+            Submit
+          </Button>
         </div>
       </div>
     </div>
   );
 }
 
-function GameOverOverlay({ score, reason, onRestart }: { score: number; reason: string; onRestart: () => void }) {
+function GameOverOverlay({
+  score,
+  reason,
+  onRestart,
+}: {
+  score: number;
+  reason: string;
+  onRestart: () => void;
+}) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-space/80 p-4 backdrop-blur-md">
       <div className="w-full max-w-md rounded-lg border border-hazard bg-gradient-panel p-6 text-center text-panel-foreground shadow-command">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-hazard">Game over</p>
         <h2 className="font-display mt-2 text-5xl font-bold">{score.toLocaleString()}</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{reason || "The mothership defense grid collapsed."}</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {reason || "The mothership defense grid collapsed."}
+        </p>
         <Button className="mt-6" variant="danger" size="xl" onClick={onRestart}>
           <RotateCcw className="size-5" /> Restart
         </Button>

@@ -108,8 +108,15 @@
   --success-foreground: oklch(0.1 0.035 238);
   --stealth: oklch(0.63 0.18 292);
   --stealth-foreground: oklch(0.98 0.015 110);
-  --gradient-space: radial-gradient(circle at 20% 12%, oklch(0.38 0.15 158 / 45%), transparent 26%), radial-gradient(circle at 78% 22%, oklch(0.45 0.15 35 / 34%), transparent 24%), linear-gradient(145deg, oklch(0.11 0.06 248), oklch(0.19 0.07 235) 54%, oklch(0.12 0.05 210));
-  --gradient-panel: linear-gradient(135deg, oklch(0.255 0.06 238 / 92%), oklch(0.16 0.055 245 / 86%));
+  --gradient-space:
+    radial-gradient(circle at 20% 12%, oklch(0.38 0.15 158 / 45%), transparent 26%),
+    radial-gradient(circle at 78% 22%, oklch(0.45 0.15 35 / 34%), transparent 24%),
+    linear-gradient(145deg, oklch(0.11 0.06 248), oklch(0.19 0.07 235) 54%, oklch(0.12 0.05 210));
+  --gradient-panel: linear-gradient(
+    135deg,
+    oklch(0.255 0.06 238 / 92%),
+    oklch(0.16 0.055 245 / 86%)
+  );
   --gradient-primary: linear-gradient(135deg, var(--primary), oklch(0.78 0.17 87));
   --gradient-hazard: linear-gradient(135deg, var(--hazard), oklch(0.65 0.22 18));
   --gradient-stealth: linear-gradient(135deg, var(--stealth), oklch(0.5 0.16 235));
@@ -163,25 +170,50 @@
 }
 
 @keyframes drift {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(1.5rem, -1rem, 0) rotate(2deg); }
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(1.5rem, -1rem, 0) rotate(2deg);
+  }
 }
 
 @keyframes alert-pulse {
-  0%, 100% { opacity: 0.55; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.04); }
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
 }
 
 @keyframes scan {
-  0% { transform: translateY(-100%); opacity: 0; }
-  15%, 85% { opacity: 0.45; }
-  100% { transform: translateY(100%); opacity: 0; }
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    border-color: var(--color-border);
+  }
 
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+  }
 
   body {
     min-width: 320px;
@@ -192,7 +224,11 @@
     letter-spacing: 0;
   }
 
-  button, input, select { font: inherit; }
+  button,
+  input,
+  select {
+    font: inherit;
+  }
 
   ::selection {
     background: var(--color-primary);
@@ -201,16 +237,34 @@
 }
 
 @layer utilities {
-  .font-display { font-family: var(--font-display); }
-  .bg-gradient-space { background: var(--gradient-space); }
-  .bg-gradient-panel { background: var(--gradient-panel); }
-  .bg-gradient-primary { background: var(--gradient-primary); }
-  .bg-gradient-hazard { background: var(--gradient-hazard); }
-  .bg-gradient-stealth { background: var(--gradient-stealth); }
-  .shadow-command { box-shadow: var(--shadow-command); }
-  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .bg-gradient-space {
+    background: var(--gradient-space);
+  }
+  .bg-gradient-panel {
+    background: var(--gradient-panel);
+  }
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  .bg-gradient-hazard {
+    background: var(--gradient-hazard);
+  }
+  .bg-gradient-stealth {
+    background: var(--gradient-stealth);
+  }
+  .shadow-command {
+    box-shadow: var(--shadow-command);
+  }
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
   .game-grid {
-    background-image: linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    background-image:
+      linear-gradient(var(--color-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
     background-size: 48px 48px;
   }
   .scanline::after {
@@ -224,7 +278,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
