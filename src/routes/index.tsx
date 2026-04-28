@@ -390,12 +390,14 @@ function StatusPanel({
   level,
   flagValue,
   stealthMs,
+  powerUpMs,
   activeWeapons,
 }: {
   score: number;
   level: number;
   flagValue: WeaponFlag;
   stealthMs: number;
+  powerUpMs: number;
   activeWeapons: Weapon[];
 }) {
   return (
@@ -407,6 +409,11 @@ function StatusPanel({
           label="Stealth"
           value={`${(stealthMs / 1000).toFixed(1)}s`}
           danger={stealthMs <= 3_000}
+        />
+        <Metric
+          label="POWER-UP (Fire, Water and Laser beam)"
+          value={`${(powerUpMs / 1000).toFixed(1)}s`}
+          danger={powerUpMs <= 3_000}
         />
         <div className="rounded-lg border bg-background/10 p-3">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
