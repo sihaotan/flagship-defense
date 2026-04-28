@@ -33,10 +33,14 @@ export const Route = createRootRoute({
       { name: "description", content: "A real-time LaunchDarkly feature-flag survival game defending a spaceship." },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "LaunchDarkly Mothership Defense" },
-      { property: "og:description", content: "Defend the mothership by changing LaunchDarkly weapon flags in real time." },
+      { property: "og:description", content: "A real-time LaunchDarkly feature-flag survival game defending a spaceship." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "LaunchDarkly Mothership Defense" },
+      { name: "twitter:description", content: "A real-time LaunchDarkly feature-flag survival game defending a spaceship." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/92151bb9-c13f-418b-a008-5ccbc9b8e3fa/id-preview-15437a0f--8075c9c8-11d4-4ed4-b982-326d7aa44a20.lovable.app-1777399342502.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/92151bb9-c13f-418b-a008-5ccbc9b8e3fa/id-preview-15437a0f--8075c9c8-11d4-4ed4-b982-326d7aa44a20.lovable.app-1777399342502.png" },
     ],
     links: [
       {
