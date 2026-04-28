@@ -543,16 +543,46 @@ function MonsterSprite({ monster }: { monster: Monster }) {
   return (
     <div
       className={cn(
-        "absolute grid size-16 place-items-center rounded-lg border bg-panel/85 text-3xl shadow-command transition-transform duration-100",
+        "absolute z-10 grid size-20 place-items-center rounded-lg border bg-panel/85 shadow-command transition-transform duration-100",
+        monster.kind === "leaf" && "border-primary/70",
+        monster.kind === "fire" && "border-hazard/80",
+        monster.kind === "stone" && "border-muted/80",
         monster.kind === "goblin" && "animate-alert-pulse border-hazard bg-hazard/20",
       )}
       style={{ left: `${monster.x}%`, top: `${monster.y}%`, transform: "translate(-50%, -50%)" }}
       title={`${spec.name} — weakness: ${spec.weakness}`}
     >
-      <span>{spec.icon}</span>
-      <span className="absolute -bottom-6 rounded-sm bg-panel px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-panel-foreground">
-        {spec.weakness}
+      <MonsterGraphic kind={monster.kind} />
+      <span className="absolute -bottom-7 whitespace-nowrap rounded-sm border bg-panel px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-panel-foreground">
+        {spec.label}
       </span>
+    </div>
+  );
+}
+
+function MonsterGraphic({ kind }: { kind: MonsterKind }) {
+  if (kind === "leaf") {
+    return <div className="monster-leaf" aria-label="Leaf Monster" />;
+  }
+  if (kind === "fire") {
+    return <div className="monster-fire" aria-label="Fire Monster" />;
+  }
+  if (kind === "stone") {
+    return <div className="monster-stone" aria-label="Stone Monster" />;
+  }
+  return <div className="monster-goblin" aria-label="Goblin Monster" />;
+}
+
+function SpaceshipGraphic({ stealth }: { stealth: boolean }) {
+  return (
+    <div className={cn("spaceship", stealth && "spaceship-stealth")} aria-label="Spaceship">
+      <div className="spaceship-nose" />
+      <div className="spaceship-body">
+        <span />
+      </div>
+      <div className="spaceship-wing spaceship-wing-left" />
+      <div className="spaceship-wing spaceship-wing-right" />
+      <div className="spaceship-thruster" />
     </div>
   );
 }
