@@ -45,6 +45,7 @@ const SHIP_LINE = 86;
 const SPAWN_INTERVAL_MS = 2_000;
 const LEVEL_DURATION_MS = 15_000;
 const STEALTH_LIMIT_MS = 10_000;
+const POWER_UP_LIMIT_MS = 10_000;
 
 const monsterSpecs: Record<
   MonsterKind,
@@ -130,6 +131,7 @@ function Index() {
   const [score, setScore] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [stealthMs, setStealthMs] = useState(STEALTH_LIMIT_MS);
+  const [powerUpMs, setPowerUpMs] = useState(POWER_UP_LIMIT_MS);
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [gameOverReason, setGameOverReason] = useState("");
   const [pointer, setPointer] = useState({ x: 50, y: 50 });
@@ -138,6 +140,7 @@ function Index() {
 
   const activeWeapons = useMemo(() => weaponsFromFlag(flagValue), [flagValue]);
   const isStealth = activeWeapons.length === 0 || flagValue === "stealth mode";
+  const isPowerUp = flagValue === "fire, water and laser beam";
   const level = getLevel(elapsedMs);
 
   useEffect(() => {
@@ -195,6 +198,12 @@ function Index() {
         if (next === 0) endGame("Stealth reserves depleted before the mothership escaped.");
         return next;
       });
+      setPowerUpMs((current) => {
+        if (!isPowerUp) return current;
+        const next = Math.max(0, current - 100);
+        if (next === 0) endGame("POWER-UP reserves depleted from sustained triple-weapon fire.");
+        return next;
+      });
 
       setMonsters((current) => {
         const currentLevel = getLevel(elapsedMs);
@@ -232,7 +241,7 @@ function Index() {
     }, 100);
 
     return () => window.clearInterval(tick);
-  }, [activeWeapons, elapsedMs, gameState, isStealth]);
+  }, [activeWeapons, elapsedMs, gameState, isPowerUp, isStealth]);
 
   function normalizeFlag(value: unknown): WeaponFlag {
     return weaponOptions.includes(value as WeaponFlag) ? (value as WeaponFlag) : "stealth mode";
@@ -249,10 +258,22 @@ function Index() {
     setScore(0);
     setElapsedMs(0);
     setStealthMs(STEALTH_LIMIT_MS);
+    setPowerUpMs(POWER_UP_LIMIT_MS);
     setMonsters([]);
     setGameOverReason("");
     lastSpawnRef.current = 0;
     setGameState("RUNNING");
+  }
+
+  function resetToLevelOne() {
+    setScore(0);
+    setElapsedMs(0);
+    setStealthMs(STEALTH_LIMIT_MS);
+    setPowerUpMs(POWER_UP_LIMIT_MS);
+    setMonsters([]);
+    setGameOverReason("");
+    lastSpawnRef.current = 0;
+    setGameState("INSTRUCTION");
   }
 
   function endGame(reason: string) {
@@ -328,6 +349,7 @@ function Index() {
             level={level}
             flagValue={flagValue}
             stealthMs={stealthMs}
+            powerUpMs={powerUpMs}
             activeWeapons={activeWeapons}
           />
           <Battlefield
@@ -356,7 +378,7 @@ function Index() {
         <GameOverOverlay
           score={score}
           reason={gameOverReason}
-          onRestart={() => setGameState("INSTRUCTION")}
+          onRestart={resetToLevelOne}
         />
       )}
     </main>
@@ -368,12 +390,14 @@ function StatusPanel({
   level,
   flagValue,
   stealthMs,
+  powerUpMs,
   activeWeapons,
 }: {
   score: number;
   level: number;
   flagValue: WeaponFlag;
   stealthMs: number;
+  powerUpMs: number;
   activeWeapons: Weapon[];
 }) {
   return (
@@ -385,6 +409,11 @@ function StatusPanel({
           label="Stealth"
           value={`${(stealthMs / 1000).toFixed(1)}s`}
           danger={stealthMs <= 3_000}
+        />
+        <Metric
+          label="POWER-UP (Fire, Water and Laser beam)"
+          value={`${(powerUpMs / 1000).toFixed(1)}s`}
+          danger={powerUpMs <= 3_000}
         />
         <div className="rounded-lg border bg-background/10 p-3">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
