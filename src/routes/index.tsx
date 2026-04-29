@@ -80,9 +80,41 @@ const weaponVisuals: Record<Weapon, { icon: typeof Flame; label: string }> = {
   "laser beam": { icon: Zap, label: "Laser" },
 };
 
-function weaponsFromFlag(flag: string): Weapon[] {
-  if (flag === "stealth mode") return [];
-  return (["fire", "water", "laser beam"] as Weapon[]).filter((weapon) => flag.includes(weapon));
+function weaponsFromFlag(flag: WeaponFlag): Weapon[] {
+  const weaponsByFlag: Record<WeaponFlag, Weapon[]> = {
+    fire: ["fire"],
+    water: ["water"],
+    "laser beam": ["laser beam"],
+    "fire and water": ["fire", "water"],
+    "fire and laser beam": ["fire", "laser beam"],
+    "water and laser beam": ["water", "laser beam"],
+    "fire, water and laser beam": ["fire", "water", "laser beam"],
+    "stealth mode": [],
+  };
+
+  return weaponsByFlag[flag];
+}
+
+function flagFromWeapons(weapons: Weapon[]): WeaponFlag {
+  const key = weapons.join("|");
+  const flagsByWeaponKey: Record<string, WeaponFlag> = {
+    fire: "fire",
+    water: "water",
+    "laser beam": "laser beam",
+    "fire|water": "fire and water",
+    "fire|laser beam": "fire and laser beam",
+    "water|laser beam": "water and laser beam",
+    "fire|water|laser beam": "fire, water and laser beam",
+  };
+
+  return flagsByWeaponKey[key] ?? "stealth mode";
+}
+
+function parseWeapons(value: string): Weapon[] {
+  return (["fire", "water", "laser beam"] as Weapon[]).filter((weapon) => {
+    if (weapon === "laser beam") return /\blaser(?:\s+beam)?\b/.test(value);
+    return new RegExp(`\\b${weapon}\\b`).test(value);
+  });
 }
 
 function getLevel(elapsedMs: number) {
@@ -120,6 +152,10 @@ function weaponForMonster(monster: Monster, activeWeapons: Weapon[]) {
   const weakness = monsterSpecs[monster.kind].weakness;
   if (weakness === "stealth") return undefined;
   return activeWeapons.includes(weakness) ? weakness : undefined;
+}
+
+function isMonsterDefeated(monster: Monster, activeWeapons: Weapon[]) {
+  return weaponForMonster(monster, activeWeapons) !== undefined;
 }
 
 function Index() {
