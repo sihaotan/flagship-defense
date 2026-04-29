@@ -251,10 +251,7 @@ function Index() {
           y: monster.y + monster.speed * 0.1,
         }));
 
-        nextMonsters = nextMonsters.filter((monster) => {
-          if (monster.kind === "goblin") return true;
-          return !activeWeapons.includes(monsterSpecs[monster.kind].weakness as Weapon);
-        });
+        nextMonsters = nextMonsters.filter((monster) => !isMonsterDefeated(monster, activeWeapons));
 
         for (const monster of nextMonsters) {
           if (monster.y >= SHIP_LINE) {
@@ -285,9 +282,9 @@ function Index() {
   function normalizeFlag(value: unknown): WeaponFlag {
     if (typeof value !== "string") return "stealth mode";
     const cleanValue = value.trim().toLowerCase();
-    return weaponOptions.includes(cleanValue as WeaponFlag)
-      ? (cleanValue as WeaponFlag)
-      : "stealth mode";
+    if (cleanValue === "stealth mode") return "stealth mode";
+    if (weaponOptions.includes(cleanValue as WeaponFlag)) return cleanValue as WeaponFlag;
+    return flagFromWeapons(parseWeapons(cleanValue));
   }
 
   function saveClientId() {
